@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+{% load static %}
+     
+
+
+{% block content %}
+
+<div class="wrapper"> 
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>            
+            LISTA DE MEDICAMENTOS
+        </h1>
+        <ol class="breadcrumb">
+        </ol>
+      </section>
+      <div class="box-body">
+        <table id="example1" class="table table-bordered table-striped">
+          <thead>
+           <tr>
+              <th>N°</th>
+              <th>Medicamento</th>                       
+              <th>Precio Compra</th> 
+              <th>Precio Venta</th>
+              <th>Proveedor</th>                             
+              <th>Telefono</th>                       
+            </tr>
+          </thead>
+          <tbody>
+           {% for produ in lista_producto %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{produ.nombre}}</td>
+              <td>{{produ.precio}}</td>
+              <td>{{produ.precioVenta}}</td>
+              <td>{{produ.proveedor.nombre}}</td>
+              <td>{{produ.proveedor.telefono}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div><!-- /.box-body -->
+  
+    <footer class="main-footer">
+
+
+
+{%endblock%}

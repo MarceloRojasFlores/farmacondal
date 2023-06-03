@@ -1,0 +1,86 @@
+<form id="venta_form" method="post" action="/crear_venta/">
+  {% csrf_token %}
+  
+  <h3>Cliente:</h3>
+  <button type="button" id="nuevo_cliente_btn">Nuevo cliente</button>
+  <button type="button" id="buscar_cliente_btn">Buscar cliente</button>
+
+  <div id="nuevo_cliente_fields" style="display: none;">
+    <h3>Registro de cliente:</h3>
+    <input type="text" name="nit_cliente" placeholder="NIT del cliente" required>
+    <input type="text" name="nombre_cliente" placeholder="Nombre del cliente" required>
+    <input type="text" name="direccion_cliente" placeholder="Dirección del cliente" required>
+    <input type="text" name="telefono_cliente" placeholder="Teléfono del cliente" required>
+  </div>
+
+  <div id="buscar_cliente_fields" style="display: none;">
+    <input type="text" id="nit_cliente_input" name="nit_cliente" placeholder="NIT del cliente" required>
+    <button type="button" id="buscar_cliente_submit">Buscar</button>
+  </div>
+
+  <!-- Agregar campos para el producto, cantidad vendida, precio unitario y otros detalles -->
+  <h3>Datos de la venta:</h3>
+  <input type="text" name="producto" placeholder="Producto" required>
+  <input type="number" name="cantidad_vendida" placeholder="Cantidad vendida" required>
+  <input type="text" name="precio_unitario" placeholder="Precio unitario" required>
+
+  <button type="submit">Realizar venta</button>
+</form>
+
+<div id="cliente_info"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const nuevoClienteBtn = document.getElementById("nuevo_cliente_btn");
+    const buscarClienteBtn = document.getElementById("buscar_cliente_btn");
+    const nuevoClienteFields = document.getElementById("nuevo_cliente_fields");
+    const buscarClienteFields = document.getElementById("buscar_cliente_fields");
+
+    nuevoClienteBtn.addEventListener("click", function() {
+      nuevoClienteFields.style.display = "block";
+      buscarClienteFields.style.display = "none";
+    });
+
+    buscarClienteBtn.addEventListener("click", function() {
+      nuevoClienteFields.style.display = "none";
+      buscarClienteFields.style.display = "block";
+    });
+
+    const buscarClienteSubmit = document.getElementById("buscar_cliente_submit");
+    buscarClienteSubmit.addEventListener("click", function() {
+      const nitCliente = document.getElementById("nit_cliente_input").value;
+
+      // Realizar la petición AJAX para buscar el cliente
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", "/buscar_cliente1/?nit=" + nitCliente, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+
+            // Mostrar los datos del cliente encontrado
+            const clienteInfo = document.getElementById("cliente_info");
+            clienteInfo.innerHTML = "<p>Nombre: " + response.nombre + "</p>" +
+                                    "<p>Dirección: " + response.direccion + "</p>" +
+                                    "<p>Teléfono: " + response.telefono + "</p>";
+          } else {
+            // Manejar el caso en que no se encuentre el cliente
+            const clienteInfo = document.getElementById("cliente_info");
+            clienteInfo.innerHTML = "<p>Cliente no encontrado</p>";
+          }
+        }
+      };
+      xhr.send();
+    });
+
+    const ventaForm = document.getElementById("venta_form");
+    ventaForm.addEventListener("submit", function(event) {
+      // Prevenir el envío del formulario si aún no se ha buscado o registrado un cliente
+      const clienteInfo = document.getElementById("cliente_info");
+      if (buscarClienteFields.style.display === "block" && clienteInfo.innerHTML === "") {
+        event.preventDefault();
+        alert("Por favor, busque o registre un cliente antes de realizar la venta.");
+      }
+    });
+  });
+</script>

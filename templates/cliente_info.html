@@ -1,0 +1,8 @@
+{% if cliente %}
+  <h3>Datos del cliente:</h3>
+  <p>Nombre: {{ cliente.nombre }}</p>
+  <p>Dirección: {{ cliente.direccion }}</p>
+  <p>Teléfono: {{ cliente.telefono }}</p>
+{% elif mensaje_error %}
+  <p>{{ mensaje_error }}</p>
+{% endif %}

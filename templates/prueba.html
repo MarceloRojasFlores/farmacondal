@@ -1,0 +1,179 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+.venta-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .form-field {
+    margin-bottom: 15px;
+  }
+  
+  .form-section {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .btn1 {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  #cliente-existente-fields {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+</style>
+
+<h2>Crear Venta</h2>
+<form method="POST" id="venta-form" class="venta-form">
+  {% csrf_token %}
+  <div class="form-field">
+    <label for="id_producto">Producto:</label>
+    {{ form.producto }}
+  </div>
+  <div class="form-field">
+    <label for="id_cantidad">Cantidad:</label>
+    {{ form.cantidad_vendida }}
+  </div>
+  <div class="form-field">
+    <label for="id_precio_venta">Precio Venta:</label>
+    <span id="precio-venta"></span>
+    <input type="hidden" id="id_precio_unitario" name="precio_unitario">
+  </div>
+  <div class="form-field">
+    <label for="id_total">Total:</label>
+    <span id="total-value"></span>
+  </div>
+  
+  <div id="buscar-cliente-fields" class="form-section" style="display: none;">
+    <div class="form-field">
+      <label for="id_nit_cliente_buscar">Buscar Cliente por NIT:</label>
+      {{ form.nit_cliente_buscar }}
+      <button type="button" id="buscar-cliente-nit-btn">Buscar</button>
+    </div>
+    <div id="cliente-existente-fields" style="display: none;"></div>
+  </div>
+  
+  <div id="crear-cliente-fields" class="form-section" style="display: none;">
+    <div class="form-field">
+      <label for="id_nit_cliente_nuevo">NIT del Nuevo Cliente:</label>
+      {{ form.nit_cliente_nuevo }}
+    </div>
+    <div class="form-field">
+      <label for="id_nombre_cliente_nuevo">Nombre del Nuevo Cliente:</label>
+      {{ form.nombre_cliente_nuevo }}
+    </div>
+    <div class="form-field">
+      <label for="id_direccion_cliente_nuevo">Dirección del Nuevo Cliente:</label>
+      {{ form.direccion_cliente_nuevo }}
+    </div>
+    <div class="form-field">
+      <label for="id_telefono_cliente_nuevo">Teléfono del Nuevo Cliente:</label>
+      {{ form.telefono_cliente_nuevo }}
+    </div>
+  </div>
+  
+  <div class="form-field">
+    <button type="button" id="buscar-cliente-btn">Buscar Cliente</button>
+    <button type="button" id="crear-cliente-btn">Crear Nuevo Cliente</button>
+  </div>
+  
+  <button id="boton" class="btn1" type="submit">Crear Venta</button>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const buscarClienteBtn = document.getElementById('buscar-cliente-btn');
+    const crearClienteBtn = document.getElementById('crear-cliente-btn');
+    const buscarClienteFields = document.getElementById('buscar-cliente-fields');
+    const crearClienteFields = document.getElementById('crear-cliente-fields');
+    const buscarClienteNitBtn = document.getElementById('buscar-cliente-nit-btn');
+    const clienteExistenteFields = document.getElementById('cliente-existente-fields');
+    const totalValue = document.getElementById('total-value');
+    const cantidadInput = document.getElementById('id_cantidad_vendida');
+    const precioVentaSpan = document.getElementById('precio-venta');
+    const precioUnitarioInput = document.getElementById('id_precio_unitario');
+
+    function actualizarTotal() {
+      const cantidad = parseInt(cantidadInput.value);
+      const precioUnitario = parseFloat(precioUnitarioInput.value);
+      const total = cantidad * precioUnitario;
+      totalValue.textContent = total.toFixed(2);
+    }
+
+    buscarClienteBtn.addEventListener('click', function() {
+      buscarClienteFields.style.display = 'block';
+      crearClienteFields.style.display = 'none';
+      clienteExistenteFields.style.display = 'none';
+    });
+
+    crearClienteBtn.addEventListener('click', function() {
+      buscarClienteFields.style.display = 'none';
+      crearClienteFields.style.display = 'block';
+      clienteExistenteFields.style.display = 'none';
+    });
+
+    buscarClienteNitBtn.addEventListener('click', function() {
+      const nitClienteBuscar = document.getElementById('id_nit_cliente_buscar').value;
+      console.log(nitClienteBuscar);
+
+      fetch('/buscar_cliente/?nit=' + nitClienteBuscar)
+        .then(response => response.json())
+        .then(data => {
+          if (data.cliente) {
+            const clienteEncontrado = `
+              <h3>Cliente encontrado:</h3>
+              <p>NIT: ${data.cliente.nit}</p>
+              <p>Nombre: ${data.cliente.nombre}</p>
+              <p>Dirección: ${data.cliente.direccion}</p>
+              <p>Teléfono: ${data.cliente.telefono}</p>
+            `;
+            clienteExistenteFields.innerHTML = clienteEncontrado;
+            clienteExistenteFields.style.display = 'block';
+          } else {
+            clienteExistenteFields.style.display = 'none';
+            console.log("Error al encontrar datos");
+          }
+        });
+    });
+
+    cantidadInput.addEventListener('input', actualizarTotal);
+    precioUnitarioInput.addEventListener('input', actualizarTotal);
+
+    const productoSelect = document.getElementById('id_producto');
+
+    productoSelect.addEventListener('change', function() {
+      const productoId = this.value;
+
+      fetch(`/obtener_precio_venta/?producto=${productoId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.precioVenta) {
+            precioVentaSpan.textContent = data.precioVenta;
+            precioUnitarioInput.value = data.precioVenta; // Agrega esta línea para establecer el precio unitario
+            actualizarTotal();
+          } else {
+            precioVentaSpan.textContent = 'No disponible';
+            precioUnitarioInput.value = ''; // Agrega esta línea para eliminar el valor del precio unitario
+            totalValue.textContent = '';
+          }
+        });
+    });
+  });
+</script>
+
+  
+{% endblock %}

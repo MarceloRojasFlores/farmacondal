@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+    {% if productos_por_vencer %}
+        <div id="alerta" class="alert alert-warning" style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+            <p>¡Alerta! Hay medicamentos que están por vencer. Por favor, verifica tu inventario.</p>
+        </div>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var alerta = document.getElementById('alerta');
+            if (alerta) {
+                setTimeout(function() {
+                    alerta.style.opacity = '0';
+                    setTimeout(function() {
+                        alerta.style.display = 'none';
+                    }, 500);
+                }, 10000);
+            }
+        });
+    </script>
+
+
+<style>
+    /* Estilo para la notificación */
+    #alerta {
+        background-color: #ffc107;
+        color: #000;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    #cerrar-alerta {
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+{% endblock %}

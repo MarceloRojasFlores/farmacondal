@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+{% load static %}
+{%block content%}
+     
+<h1>Inventario de Farmacia</h1>
+  
+  <input type="text" id="searchBar" placeholder="Buscar producto">
+  
+  <table id="inventoryTable">
+    <tr>
+      <th>Producto</th>
+      <th>Fecha de vencimiento</th>
+      <th>Cantidad</th>
+    </tr>
+    <tr>
+      <td>Producto 1</td>
+      <td>01/06/2023</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>Producto 2</td>
+      <td>15/07/2023</td>
+      <td>5</td>
+    </tr>
+    <!-- Agrega más filas según sea necesario -->
+  </table>
+<style>
+    h1 {
+  text-align: center;
+}
+
+#searchBar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+#inventoryTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#inventoryTable th,
+#inventoryTable td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+#inventoryTable th {
+  background-color: #f2f2f2;
+}
+</style>
+
+{%endblock%}

@@ -1,0 +1,117 @@
+{% extends 'layout.html' %}
+{% load static %}
+     
+
+
+{%block content%}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Venta en Farmacia</title>
+    <style>
+        /* Estilos CSS para la venta en la farmacia */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333333;
+            text-align: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dddddd;
+        }
+        
+        table th {
+            background-color: #f2f2f2;
+        }
+        
+        .total {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .btn-container .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .btn:hover {
+            background-color: #45a049;
+        }
+        
+        .form-row {
+            margin-bottom: 10px;
+        }
+        
+        .form-label {
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .form-input {
+            width: 200px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Venta en Farmacia</h1>
+        <form action="#" method="post">
+            <div class="form-row">
+                <label class="form-label" for="producto">Producto:</label>
+                <input class="form-input" type="text" id="producto" name="producto" required>
+            </div>
+            <div class="form-row">
+                <label class="form-label" for="cantidad">Cantidad vendida:</label>
+                <input class="form-input" type="number" id="cantidad" name="cantidad" required>
+            </div>
+            <div class="form-row">
+                <label class="form-label" for="precio">Precio unitario:</label>
+                <input class="form-input" type="number" step="0.01" id="precio" name="precio" required>
+            </div>
+            <div class="total">
+                <strong>Total:</strong> {{ venta.total }}
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn">Realizar Venta</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+{%endblock%}

@@ -1,0 +1,8 @@
+body{
+    background-image: url(../img/portada7.jpeg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    font-family: 'lato', sans-serif;
+}

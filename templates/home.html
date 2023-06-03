@@ -1,0 +1,136 @@
+{% extends 'layout.html' %}
+{% load static %}
+     
+{%block content%}  
+    <style>
+      #myChart {
+              height: 50px; /* Ajusta la altura según tus necesidades */
+          }
+
+      #alerta {
+      background-color: #ffc107;
+      color: #000;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      #cerrar-alerta {
+          font-size: 18px;
+          font-weight: bold;
+          cursor: pointer;
+      }
+    </style>
+  <script>
+      // Función para cerrar la alerta después de 10 segundos
+      setTimeout(function() {
+        var alerta = document.getElementById('alerta');
+        if (alerta) {
+          alerta.style.display = 'none';
+        }
+      }, 10000);
+  </script>
+    <div class="row">
+        <div class="col-md-12">
+          <h4>Bienvenido {{request.user.first_name}}</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <div class="card bg-primary text-white h-100">
+            <div class="card-body py-5">COMPRAS TOTALES</div>
+            <div class="card-footer d-flex btn btn-lg btn-primary">
+              Ver Detalles
+              <span class="ms-auto">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card bg-warning text-dark h-100">
+            <div class="card-body py-5">VENTAS TOTALES</div>
+            <div class="card-footer d-flex btn btn-lg btn-warning">
+              Ver Detalles
+              <span class="ms-auto">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card bg-success text-white h-100">
+            <div class="card-body py-5">NUEVOS PRODUCTOS</div>
+            <div class="card-footer d-flex btn btn-lg btn-success">
+              Ver Detalles
+              <span class="ms-auto">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <div class="card bg-danger text-white h-100">
+            <div class="card-body py-5">PRODUCTOS EN VENCIMIENTO</div>
+            <div class="card-footer text-white d-flex btn btn-lg btn-danger">
+              Ver Detalles
+              <span class="ms-auto">
+                <i class="bi bi-chevron-right"></i>
+              </span>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      <h1>dashboard</h1>
+      <canvas id="myChart" ></canvas>
+
+    {% if productos_por_vencer %}
+    <div id="alerta" class="alert alert-warning" style="position: fixed; top: 10px; right: 10px; z-index: 9999;">
+      <p>¡Alerta! Hay medicamentos que están por vencer. Por favor, verifica tu inventario.</p>
+    </div>
+    {% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ventasPorMes = JSON.parse('{{ ventas_por_mes_json|safe }}');
+            console.log(ventasPorMes)  
+            var labels = ventasPorMes.map(function(venta) {
+                return venta.mes;
+            });
+    
+            var data = ventasPorMes.map(function(venta) {
+                return venta.total_ganancias;
+            });
+    
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ganancias por Mes',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            precision: 0
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+
+{%endblock%}

@@ -1,0 +1,45 @@
+
+{% block content %}
+    <canvas id="myChart"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ventasPorMes = JSON.parse('{{ ventas_por_mes_json|safe }}');
+            console.log(ventasPorMes)  
+            var labels = ventasPorMes.map(function(venta) {
+                return venta.mes;
+            });
+    
+            var data = ventasPorMes.map(function(venta) {
+                return venta.total_ganancias;
+            });
+    
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ganancias por Mes',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            precision: 0
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    
+{% endblock %}
